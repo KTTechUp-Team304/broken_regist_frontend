@@ -37,9 +37,7 @@ async function parseJson<T>(res: Response, errorMessage: string): Promise<T> {
 }
 
 export function fetchMe() {
-  return authFetch('/api/auth/me').then((res) =>
-    parseJson<MeResponse>(res, '계정 정보를 불러오지 못했습니다.'),
-  );
+  return authFetch('/api/auth/me').then((res) => parseJson<MeResponse>(res, '계정 정보를 불러오지 못했습니다.'));
 }
 
 export function fetchMyEnrollments(userId?: number) {
@@ -58,7 +56,7 @@ export function createEnrollment(userId: number, courseId: number) {
 }
 
 export function cancelEnrollment(enrollmentId: number) {
-  return authFetch(`/api/enrollments/${enrollmentId}/cancel`, { method: 'POST' }).then(
-    (res) => parseJson<EnrollmentResponse>(res, '수강 취소에 실패했습니다.'),
+  return authFetch(`/api/enrollments/${enrollmentId}/cancel`, { method: 'POST' }).then((res) =>
+    parseJson<EnrollmentResponse>(res, '수강 취소에 실패했습니다.'),
   );
 }

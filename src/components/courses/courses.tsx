@@ -3,11 +3,7 @@
 import { useDeferredValue, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
-import {
-  fetchCourses,
-  formatCategoryLabel,
-  resolveIsVisibleQuery,
-} from '@/commons/api/courses-api';
+import { fetchCourses, formatCategoryLabel, resolveIsVisibleQuery } from '@/commons/api/courses-api';
 import styles from './courses.module.css';
 
 const CATEGORY_OPTIONS = [
@@ -27,7 +23,11 @@ export function Courses({ isVisibleQuery }: CoursesProps) {
   const categoryParam = category === '전체' ? undefined : category;
   const isVisibleParam = resolveIsVisibleQuery(isVisibleQuery);
 
-  const { data: courses = [], isLoading, isError } = useQuery({
+  const {
+    data: courses = [],
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ['courses', { keyword: deferredSearch, category: categoryParam, isVisible: isVisibleParam }],
     queryFn: () =>
       fetchCourses({
@@ -54,11 +54,7 @@ export function Courses({ isVisibleQuery }: CoursesProps) {
           />
         </div>
 
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className={styles.select}
-        >
+        <select value={category} onChange={(e) => setCategory(e.target.value)} className={styles.select}>
           {CATEGORY_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
@@ -75,11 +71,7 @@ export function Courses({ isVisibleQuery }: CoursesProps) {
           <p className={styles.statusMessage}>조건에 맞는 강의가 없습니다.</p>
         )}
         {courses.map((course) => (
-          <Link
-            key={course.id}
-            href={`/course/${course.id}${detailQuery}`}
-            className={styles.courseCard}
-          >
+          <Link key={course.id} href={`/course/${course.id}${detailQuery}`} className={styles.courseCard}>
             <div>
               <div className={styles.courseHeader}>
                 <h3 className={styles.courseTitle}>{course.courseTitle}</h3>

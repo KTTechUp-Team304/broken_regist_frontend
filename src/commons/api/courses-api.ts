@@ -36,9 +36,7 @@ export interface FetchCoursesParams {
 }
 
 /** URL 쿼리 isVisible / isvisible (대소문자 혼용) */
-export function resolveIsVisibleQuery(
-  value: string | null | undefined,
-): string | undefined {
+export function resolveIsVisibleQuery(value: string | null | undefined): string | undefined {
   const normalized = value?.trim();
   return normalized ? normalized : undefined;
 }

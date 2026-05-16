@@ -10,8 +10,11 @@
   }
 }
 
+/* UA 기본 body margin(보통 8px) 제거 — * 리셋만으로는 간헐적으로 남는 경우가 있어 명시 */
 html,
 body {
+  margin: 0;
+  padding: 0;
   max-width: 100vw;
   overflow-x: hidden;
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useQuery } from '@tanstack/react-query';
 import {
   LineChart,
   Line,
@@ -17,37 +18,41 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { Users, BookOpen, TrendingUp, Activity } from 'lucide-react';
+import { fetchAdminDashboard } from '@/commons/api/admin-api';
 import styles from './admin-dashboard.module.css';
-
-const enrollmentData = [
-  { month: '1월', count: 45 },
-  { month: '2월', count: 52 },
-  { month: '3월', count: 78 },
-  { month: '4월', count: 95 },
-  { month: '5월', count: 68 },
-];
-
-const courseData = [
-  { name: '컴퓨터공학', value: 35 },
-  { name: '보안', value: 25 },
-  { name: '인공지능', value: 20 },
-  { name: '데이터분석', value: 15 },
-  { name: '기타', value: 5 },
-];
-
-const dailyActiveUsers = [
-  { day: '월', users: 120 },
-  { day: '화', users: 145 },
-  { day: '수', users: 132 },
-  { day: '목', users: 158 },
-  { day: '금', users: 142 },
-  { day: '토', users: 85 },
-  { day: '일', users: 65 },
-];
 
 const COLORS = ['#c62917', '#e74c3c', '#f39c12', '#3498db', '#95a5a6'];
 
+function formatStatValue(value: number) {
+  return value.toLocaleString('ko-KR');
+}
+
 export function AdminDashboard() {
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['admin', 'dashboard'],
+    queryFn: fetchAdminDashboard,
+  });
+
+  if (isLoading) {
+    return (
+      <div className={styles.container}>
+        <h1 className={styles.title}>관리자 대시보드</h1>
+        <p>데이터를 불러오는 중…</p>
+      </div>
+    );
+  }
+
+  if (isError || !data) {
+    return (
+      <div className={styles.container}>
+        <h1 className={styles.title}>관리자 대시보드</h1>
+        <p>대시보드 데이터를 불러오지 못했습니다.</p>
+      </div>
+    );
+  }
+
+  const { stats, enrollmentTrend, courseDistribution, weeklyActiveUsers } = data;
+
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>관리자 대시보드</h1>
@@ -59,8 +64,8 @@ export function AdminDashboard() {
           </div>
           <div className={styles.statContent}>
             <span className={styles.statLabel}>전체 사용자</span>
-            <span className={styles.statValue}>1,234</span>
-            <span className={styles.statChange}>+12% from last month</span>
+            <span className={styles.statValue}>{formatStatValue(stats.totalUsers.value)}</span>
+            <span className={styles.statChange}>{stats.totalUsers.change}</span>
           </div>
         </div>
 
@@ -70,8 +75,8 @@ export function AdminDashboard() {
           </div>
           <div className={styles.statContent}>
             <span className={styles.statLabel}>개설 강의</span>
-            <span className={styles.statValue}>87</span>
-            <span className={styles.statChange}>+5 new courses</span>
+            <span className={styles.statValue}>{formatStatValue(stats.openedCourses.value)}</span>
+            <span className={styles.statChange}>{stats.openedCourses.change}</span>
           </div>
         </div>
 
@@ -81,8 +86,8 @@ export function AdminDashboard() {
           </div>
           <div className={styles.statContent}>
             <span className={styles.statLabel}>총 수강신청</span>
-            <span className={styles.statValue}>3,456</span>
-            <span className={styles.statChange}>+8% this week</span>
+            <span className={styles.statValue}>{formatStatValue(stats.totalEnrollments.value)}</span>
+            <span className={styles.statChange}>{stats.totalEnrollments.change}</span>
           </div>
         </div>
 
@@ -92,8 +97,8 @@ export function AdminDashboard() {
           </div>
           <div className={styles.statContent}>
             <span className={styles.statLabel}>활성 사용자</span>
-            <span className={styles.statValue}>892</span>
-            <span className={styles.statChange}>Last 7 days</span>
+            <span className={styles.statValue}>{formatStatValue(stats.activeUsers.value)}</span>
+            <span className={styles.statChange}>{stats.activeUsers.change}</span>
           </div>
         </div>
       </div>
@@ -115,7 +120,7 @@ export function AdminDashboard() {
         <div className={styles.chartCard}>
           <h3 className={styles.chartTitle}>월별 수강신청 추이</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={enrollmentData}>
+            <LineChart data={enrollmentTrend}>
               <CartesianGrid strokeDasharray="3 3" stroke="#3a3a3a" />
               <XAxis dataKey="month" stroke="#999" />
               <YAxis stroke="#999" />
@@ -134,7 +139,7 @@ export function AdminDashboard() {
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
-                data={courseData}
+                data={courseDistribution}
                 cx="50%"
                 cy="50%"
                 labelLine={false}
@@ -144,7 +149,7 @@ export function AdminDashboard() {
                 dataKey="value"
                 nameKey="name"
               >
-                {courseData.map((entry, index) => (
+                {courseDistribution.map((entry, index) => (
                   <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
@@ -156,7 +161,7 @@ export function AdminDashboard() {
         <div className={styles.chartCard}>
           <h3 className={styles.chartTitle}>주간 활성 사용자</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={dailyActiveUsers}>
+            <BarChart data={weeklyActiveUsers}>
               <CartesianGrid strokeDasharray="3 3" stroke="#3a3a3a" />
               <XAxis dataKey="day" stroke="#999" />
               <YAxis stroke="#999" />

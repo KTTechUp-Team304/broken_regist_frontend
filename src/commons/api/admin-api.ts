@@ -4,6 +4,23 @@ import { fetchCourses, type CourseResponse } from './courses-api';
 export type UserRole = 'student' | 'professor' | 'admin';
 export type UserStatus = 'active' | 'suspended';
 
+export interface DashboardStatItem {
+  value: number;
+  change: string;
+}
+
+export interface AdminDashboardResponse {
+  stats: {
+    totalUsers: DashboardStatItem;
+    openedCourses: DashboardStatItem;
+    totalEnrollments: DashboardStatItem;
+    activeUsers: DashboardStatItem;
+  };
+  enrollmentTrend: { month: string; count: number }[];
+  courseDistribution: { name: string; value: number }[];
+  weeklyActiveUsers: { day: string; users: number }[];
+}
+
 export interface AdminUserResponse {
   id: number;
   username: string;
@@ -29,6 +46,12 @@ async function parseJson<T>(res: Response, errorMessage: string): Promise<T> {
     throw new Error(message);
   }
   return res.json();
+}
+
+export function fetchAdminDashboard() {
+  return authFetch('/api/admin').then((res) =>
+    parseJson<AdminDashboardResponse>(res, '관리자 대시보드 데이터를 불러오지 못했습니다.'),
+  );
 }
 
 export function fetchAdminUsers() {

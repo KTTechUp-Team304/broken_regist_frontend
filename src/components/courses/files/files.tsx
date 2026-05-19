@@ -2,11 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import {
-  fetchCourseFiles,
-  formatDateOnly,
-  formatFileSize,
-} from '@/commons/api/courses-api';
+import { fetchCourseFiles, formatDateOnly, formatFileSize } from '@/commons/api/courses-api';
 import { authFetch } from '@/commons/api/auth-fetch';
 import styles from './files.module.css';
 
@@ -14,7 +10,11 @@ export function CourseFiles() {
   const params = useParams();
   const courseId = Number(params.courseId);
 
-  const { data: files = [], isLoading, isError } = useQuery({
+  const {
+    data: files = [],
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ['courses', courseId, 'files'],
     queryFn: () => fetchCourseFiles(courseId),
     enabled: Number.isFinite(courseId),
@@ -33,17 +33,10 @@ export function CourseFiles() {
     }
   };
 
-  const handleUpload = () => {
-    alert('파일 업로드 기능 (취약점: 검증 미흡)');
-  };
-
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <h1 className={styles.title}>강의 자료</h1>
-        <button type="button" onClick={handleUpload} className={styles.uploadButton}>
-          파일 업로드
-        </button>
       </div>
 
       {isLoading && <p className={styles.statusMessage}>강의 자료를 불러오는 중...</p>}

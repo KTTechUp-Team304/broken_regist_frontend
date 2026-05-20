@@ -9,8 +9,7 @@
 | ------------- | ---------------------------------------------------------------------- |
 | 스택          | Next.js 14 (App Router), TypeScript, TanStack React Query, CSS Modules |
 | 패키지 매니저 | **Yarn**                                                               |
-| 배포 URL      | `http://broken-regist-alb-1430893989.ap-northeast-2.elb.amazonaws.com/
-` _(배포 후 기입)_                                   |
+| 배포 URL      | `http://broken-regist-alb-1430893989.ap-northeast-2.elb.amazonaws.com/`|
 
 API·DB·인프라는 [broken_regist_backend](https://github.com/KTTechUp-Team304/broken_regist_backend) README를 참고하세요.
 
